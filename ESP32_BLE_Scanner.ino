@@ -20,7 +20,7 @@
 #define MIN_RSSI -80              // Minimum RSSI [db] needed to perform address comparison
 #define SCAN_TIME 10              // seconds
 #define LOOP_TIME 5               // seconds
-#define NO_DEVICE_TIMER 1*60      // seconds
+#define NO_DEVICE_TIMER 3*60      // seconds
 
 // comment the follow line to disable serial message
 #define SERIAL_PRINT
@@ -118,6 +118,9 @@ void performScan()
     {
       if(d.getRSSI() >= MIN_RSSI && addrList[j].equalsIgnoreCase(currDevAddr))
       {
+		#ifdef SERIAL_PRINT
+	      Serial.printf("Found device #%d with RSSI: %d \n", j, d.getRSSI());
+	    #endif
         present = true;
         break;
       }

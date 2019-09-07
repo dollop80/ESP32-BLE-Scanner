@@ -25,4 +25,4 @@ The BLE-Scanner has a list of known devices (pre-defined by user) and a RSSI thr
 #define NO_DEVICE_TIMER 3*60      // seconds
 ```
 
-3. Compile ESP32_BLE_Scanner.ino Arduino sketch, and flash it to ESP32 board. After flashing, ESP32 scans for BLE devices during SCAN_TIME and behaves as listed in [Detailed description](# Detailed description). You can check what the scanner does using Arduino terminal
+3. Compile ESP32_BLE_Scanner.ino Arduino sketch, and flash it to ESP32 board. After flashing, ESP32 scans for BLE devices during SCAN_TIME and behaves as listed in [Detailed description](https://github.com/dollop80/ESP32-BLE-Scanner/blob/master/README.md#detailed-description). You can check what the scanner does using Arduino terminal

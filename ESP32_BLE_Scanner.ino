@@ -10,9 +10,6 @@
 #include <BLEScan.h>
 #include <BLEAdvertisedDevice.h>
 
-#include "soc/soc.h"
-#include "soc/rtc_cntl_reg.h"
-
 //*************************************************
 // Defines
 //*************************************************
@@ -25,6 +22,9 @@
 // comment the follow line to disable serial message
 #define SERIAL_PRINT
 
+// comment this out to switch off the device listing using callback;
+// Seems this has memory leak
+//#define DEVICE_LIST_OUTPUT
 
 //*************************************************
 // Global Variables
@@ -32,7 +32,7 @@
 //Device Address List. Include a devices' address 
 String addrList[] = {"90:dd:5d:a2:a2:80", "18:4f:32:46:42:2a", "00:9e:c8:ae:d8:c1", "25:db:53:34:04:ce", " 0c:d1:5b:d9:c3:e2"};
 
-long noDevicesMillis = 0;
+long noDevicesMillis = 0, cycleCnt = 0;
 bool present = false;
 bool scanFinished = true;
 
@@ -56,7 +56,6 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
 void setup()
 {
   pinMode(LED_PIN, OUTPUT);                   //GPIO output for LED
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0);  //disable brownout detector
 
 #ifdef SERIAL_PRINT
   Serial.begin(115200);
@@ -95,10 +94,14 @@ void loop()
 //*************************************************
 void performScan()
 {
+  cycleCnt++;
+  
   BLEDevice::init("");
 
   BLEScan *pBLEScan = BLEDevice::getScan(); //create new scan
-  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+  #ifdef DEVICE_LIST_OUTPUT
+	  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+  #endif
   pBLEScan->setActiveScan(true); //active scan uses more power, but get results faster
   pBLEScan->setInterval(0x50);
   pBLEScan->setWindow(0x30);
@@ -129,6 +132,7 @@ void performScan()
   
 #ifdef SERIAL_PRINT
   Serial.println("Scan done!");
+  Serial.printf("Cycle counter: %d, Free heap: %d \n", cycleCnt, ESP.getFreeHeap());
 #endif
   scanFinished = true;
 }
